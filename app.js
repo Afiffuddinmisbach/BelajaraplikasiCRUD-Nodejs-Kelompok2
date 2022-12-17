@@ -36,7 +36,7 @@ app.get('/show', (req, res) => {
 
 app.post('/insert', (req, res) => {
   console.log('masuk insert')
-  let namaProduct = req.body.namaProduct // ini salah besar kecilnya harus nya ini namaProduct, sesuikan sama htmlnya
+  let namaProduct = req.body.namaProduct
   let harga = req.body.harga
   let keterangan = req.body.keterangan
 
