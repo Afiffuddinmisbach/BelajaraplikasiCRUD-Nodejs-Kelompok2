@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing CRUD</title>
+</head>
+
+<body>
+    <h1>Aplikasi CRUD</h1>
+
+    <input type="text" style="margin-bottom: 5px;" placeholder="Masukkan Nama Produk" id="inputNama"><br>
+    <input type="text" style="margin-bottom: 5px;" placeholder="Masukkan Harga" id="inputHarga"><br>
+    <input type="text" style="margin-bottom: 5px;" placeholder="Masukkan Keterangan" id="inputKeterangan"><br />
+
+    <button onclick="simpanProduct()">Simpan</button>
+    <button onclick="tampilData()">Tampilkan</button>
+
+    <div id="viewTampilan">
+        <!--- data render-->
+    </div>
+    <script>
+        function simpanProduct() {
+            let namaProductInput = document.getElementById("inputNama").value;
+            let hargaInput = document.getElementById("inputHarga").value;
+            let keteranganInput = document.getElementById("inputKeterangan").value;
+
+            const data = {
+                namaProduct: namaProductInput,
+                harga: hargaInput,
+                keterangan: keteranganInput, 
+            };
+
+            fetch("http://localhost:3000/insert", {
+                method: 'POST', // or 'PUT'
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status == 'true'){
+                        alert(data.message);
+                        tampilData()
+                    } else{
+                        alert("Terjadi kesalahan !. Silahkan coba lagi")
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+        
+        function tampilData(){
+            fetch("http://localhost:3000/show", {
+                method: 'GET', // or 'PUT'
+            })
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log('Success:', result);
+                    if(result.status=='true'){
+                        renderTampilan(result.data)
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function renderTampilan(data){
+            let view = "";
+            for (let index = 0; index < data.length; index++) {
+                view = view + "<li>" + data[index].NamaProduk + " <button onclick='deleteProduk("+data[index].ID+")'>Hapus</button> </li>";
+            }
+            document.getElementById("viewTampilan").innerHTML = view;
+        }
+        function deleteProduk(iddataProduct){
+            const data = {
+                iddata: iddataProduct,
+            };
+
+            fetch("http://localhost:3000/delete", {
+                method: 'POST', // or 'PUT'
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status == 'true'){
+                        alert(data.message);
+                        tampilData()
+                    } else{
+                        alert("Terjadi kesalahan !. Silahkan coba lagi")
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>
